@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
+const StyledFooter = styled.footer`
+  background-color: var(--alt-bg-color);
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 function Footer() {
-  const StyledFooter = styled.footer`
-    background-color: var(--alt-bg-color);
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `;
   return (
     <StyledFooter>
       <h4>footer</h4>
