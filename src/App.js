@@ -5,7 +5,7 @@ import GameBoard from './GameBoard';
 import Button from './Button';
 import { useEffect, useState } from 'react';
 import { pause, randomInt } from './util';
-import Knob from './Knob';
+import { v4 } from 'uuid';
 
 const StyledApp = styled.main`
   background-color: var(--bg-color);
@@ -29,10 +29,12 @@ const StyledApp = styled.main`
 function App() {
 
   const [knobAmount, setKnobAmount] = useState(10);
+  const [knobAppearance, setKnobAppearance] = useState('cards');
+  const [cardColor, setCardColor] = useState('red');
   const [deck, setDeck] = useState([]);
   const [currentDeal, setCurrentDeal] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
-  const [selectedKnob, setSelectedKnob] = useState('');
+  const [selectedKnob, setSelectedKnob] = useState(undefined);
 
   useEffect(() => {
     setDeck(createDeck(knobAmount));
@@ -51,7 +53,7 @@ function App() {
       for (let j = 0; j < 4; j++) {
         newDeck.push({
           value: (i + 1),
-          id: crypto.randomUUID(),
+          id: crypto.randomUUID ? crypto.randomUUID() : v4(),
         });
       }
     }
@@ -67,6 +69,10 @@ function App() {
     return randomCard;
   }
 
+  function getKnobDataById(id, arr) {
+    return arr.filter(knob => knob.id === id)[0];
+  }
+
   function handleClickStartGame() {
     setGameStarted(true);
     dealGame();
@@ -75,7 +81,21 @@ function App() {
   function handleClickMove() {
     console.log('clicked Move!', selectedKnob);
     const nextCurrentDeal = [ ...currentDeal];
-    
+    const movingKnob = nextCurrentDeal.splice(nextCurrentDeal.indexOf(selectedKnob), 1);
+    nextCurrentDeal[selectedKnob.value - 1].underKnobs.push(movingKnob);
+    setCurrentDeal(nextCurrentDeal);
+  }
+
+  function handleChangeKnobAppearance(e) {
+    console.warn('knobAppearance at handler is', knobAppearance);
+    const newAppearance = e.target.value.toLowerCase();
+    document.documentElement.style.setProperty('--knob-size', newAppearance === 'cards' ? 'calc(var(--game-board-size) / 8)' : 'calc(var(--game-board-size) / 6)')
+    console.log('changed appearance', newAppearance);
+    setKnobAppearance(newAppearance);
+  }
+
+  function handleChangeCardColor(e) {
+    setCardColor(e.target.value.toLowerCase());
   }
 
   async function dealGame() {
@@ -105,9 +125,9 @@ function App() {
     for (let i=0; i < 4; i++) {
       const randomDraw = drawRandomKnob(drawnIds);
       drawnIds.push(randomDraw.id);
-      centerKnobCollection.push({ selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, rotation: '0' });
+      centerKnobCollection.push({ flipped: i===3, selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, rotation: '0' });
       if (i===3) {
-        initialSelectedKnob = randomDraw.id;
+        initialSelectedKnob = randomDraw;
         console.log('setting initialSelectedKnob to', randomDraw.id);
       }
     }
@@ -130,7 +150,16 @@ function App() {
     <StyledApp>
       <Header />
       <div className='game-area'>
-        <GameBoard selectedKnob={selectedKnob} gameStarted={gameStarted} currentDeal={currentDeal} onChangeLimit={handleChangeLimit} />
+        <GameBoard 
+          knobAppearance={knobAppearance} 
+          cardColor={cardColor} 
+          selectedKnob={selectedKnob} 
+          gameStarted={gameStarted} 
+          currentDeal={currentDeal} 
+          onChangeLimit={handleChangeLimit} 
+          onChangeAppearance={handleChangeKnobAppearance}
+          onChangeCardColor={handleChangeCardColor}
+        />
       </div>
       <div className='control-area'>
         {gameStarted ? 

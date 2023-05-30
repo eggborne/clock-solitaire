@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { pause } from './util';
 
 const StyledKnob = styled.div`
   position: absolute;
@@ -15,11 +14,29 @@ const StyledKnob = styled.div`
   font-size: calc(var(--knob-size) / 2);
   line-height: 100%;
   z-index: 4;
+  color: lightgreen;
+  font-size: 2rem;
 
   opacity: 0;
-  scale: 2;
+  scale: 1.5;
 
   transition: scale 500ms ease, opacity 1000ms ease;
+
+  box-shadow: 0 0 calc(var(--knob-size) / 18) black;
+  text-shadow: 0 0 0.25rem black;
+
+  &.playing-card {
+    border-width: 0;
+    border-radius: 0.25rem;
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    height: calc(var(--knob-size) * (16/10));
+
+    &.blue {
+      background-position: center right;
+    }
+
+  }
 
   &.revealed {
     opacity: 1;
@@ -39,18 +56,20 @@ function Knob(props) {
     }
   }, [revealed]);
 
-  console.log('knob id is', props.id);
-  console.log('selectedKnob id is', props.selectedKnob);
+  const knobClass = `${revealed ? 'revealed' : ''}${props.knobAppearance === 'cards' ? ' playing-card' : ''}`;
+  console.warn('created knob with class', knobClass)
 
   return (
     <StyledKnob
-      className={revealed ? 'revealed' : ''}
+      className={knobClass}
       style={{
         rotate: revealed ? `${props.rotation * -1}deg` : '0',
-        backgroundImage: props.selected ? 'radial-gradient(green, #000000)' : 'radial-gradient(var(--knob-color), #000000)',
+        backgroundImage: props.flipped ? 'radial-gradient(green, #000000)' : 'radial-gradient(var(--knob-color), #000000)',
+        borderColor: props.selected ? 'lightgreen' : '#ffffff55',
+        backgroundPosition: props.cardColor === 'red' ? 'left center' : 'right center',
       }}
     >
-      {props.value}
+      {props.flipped && props.value}
     </StyledKnob>
   );
 }

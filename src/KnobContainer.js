@@ -11,19 +11,16 @@ const StyledKnobContainer = styled.div`
   // outline: 1px solid white;
 
   & > div:nth-child(1) {
-    translate: 0 15%;
+    translate: 0 10%;
     z-index: 3;
-    scale: 0.975;
   }
   & > div:nth-child(2) {
-    translate: 0 30%;
+    translate: 0 20%;
     z-index: 2;
-    scale: 0.95;
   }
   & > div:nth-child(3) {
-    translate: 0 45%;
+    translate: 0 30%;
     z-index: 1;
-    scale: 0.925;
   }
 
   &.center {
@@ -31,7 +28,7 @@ const StyledKnobContainer = styled.div`
 
     & > div {
       position: absolute;
-      top: 47.5%;
+      top: 46%;
       transform: translateY(-50%);
     }
   }
@@ -39,23 +36,37 @@ const StyledKnobContainer = styled.div`
 
 function KnobContainer(props) {
   return (
-    <StyledKnobContainer
-      key={props.id}
-      className={props.className}
-      style={{
-        rotate: props.rotation + 'deg',
-      }}>
-      {props.knobs.map(knobData => 
-        // knobComponent
-        <Knob 
-          selected={props.selectedKnob === knobData.id}
-          key={knobData.id} 
-          id={knobData.id} 
-          value={knobData.value} 
-          rotation={knobData.rotation}
-        />
-      )}
-    </StyledKnobContainer>
+      <StyledKnobContainer
+        key={props.id}
+        className={props.className}
+        style={{
+          rotate: props.rotation + 'deg',
+        }}>
+        {props.knobs.filter(knob => !(knob.flipped)).map(knobData => 
+          <Knob 
+            cardColor={props.cardColor}
+            flipped={knobData.flipped}
+            selected={props.selectedKnob.id === knobData.id}
+            key={knobData.id} 
+            id={knobData.id} 
+            value={knobData.value} 
+            rotation={knobData.rotation}
+            knobAppearance={props.knobAppearance}
+          />
+        )}
+        {props.knobs.filter(knob => knob.flipped).map(knobData => 
+          <Knob 
+            cardColor={props.cardColor}
+            flipped={knobData.flipped}
+            selected={props.selectedKnob === knobData.id}
+            key={knobData.id} 
+            id={knobData.id} 
+            value={knobData.value} 
+            rotation={knobData.rotation}
+            knobAppearance={props.knobAppearance}
+          />
+        )}
+      </StyledKnobContainer>
   );
 }
 
