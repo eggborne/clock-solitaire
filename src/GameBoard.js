@@ -17,20 +17,31 @@ const StyledGameBoard = styled.div`
   border-radius: 50%;
 
   & > .options-area {
-    width: var(--game-board-size);
+    
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 1rem;
 
     & > .option-row {
+      width: var(--game-board-size);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      background-color: #00000055;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      width: min-content;
 
       & * {
         width: 7rem;
+      }
+
+      &:last-child {
+        justify-content: space-between;
+        width: calc(var(--game-board-size) / 2);
+        align-self: center;
       }
     }
   }
@@ -42,12 +53,19 @@ const StyledGameBoard = styled.div`
     font-weight: bold;
   }
 
+  & input {
+    scale: 2;
+    margin: 0;
+    padding: 0;
+  }
+
   & .knob-area {
-    width: 100vw;
+    min-width: 100vw;
+    min-height: 100vw;
     display: flex;
     align-items: center;
     justify-content: center;
-    // overflow: hidden;
+    overflow: hidden;
   }
 
   & .knob-container {
@@ -71,7 +89,7 @@ function GameBoard(props) {
 
   return (
     <>
-      <Modal revealed={props.endModalShowing} headline={'YOU LOSE :('} />
+      <Modal revealed={props.endModalShowing} headline={'YOU LOSE :('} onClickOk={props.handleClickTryAgain} />
       <ScreenVeil revealed={props.endModalShowing} />
       <StyledGameBoard>
         {props.gameStarted ? 
@@ -82,6 +100,7 @@ function GameBoard(props) {
             <KnobContainer 
               key={knobContainerData.id}
               selectedKnob={props.selectedKnob}
+              animations={props.animations}
               className={knobContainerData.className}
               rotation={knobContainerData.rotation}
               knobs={knobContainerData.knobs}
@@ -93,29 +112,33 @@ function GameBoard(props) {
         </div>
           :
           <div className='options-area'>
-          <div className='option-row'>
-            <label htmlFor='type-select'>Knobs / Cards</label>
-            <select name='type-select' className='type-select' onChange={props.onChangeAppearance}>
-              <option selected={props.knobAppearance === 'knobs'}>Knobs</option>
-              <option selected={props.knobAppearance === 'cards'}>Cards</option>
-            </select>
-          </div>
-          {props.knobAppearance === 'cards' && <div className='option-row'>
-            <label htmlFor='color-select'>Card color</label>
-            <select name='color-select' className='color-select' onChange={props.onChangeCardColor}>
-              <option selected={props.cardColor === 'red'}>Red</option>
-              <option selected={props.cardColor === 'blue'}>Blue</option>
-            </select>
-          </div>}
-          <div className='option-row'>
-            <label htmlFor='limit-select'>Limit</label>
-            <select name='limit-select' className='limit-select' onChange={props.onChangeLimit}>
-              <option>10</option>
-              <option>11</option>
-              <option>12</option>
-              <option>13</option>
-            </select>
-          </div>
+            <div className='option-row'>
+              <label htmlFor='type-select'>Knobs / Cards</label>
+              <select id='type-select' name='type-select' className='type-select' onChange={props.onChangeAppearance}>
+                <option selected={props.knobAppearance === 'knobs'}>Knobs</option>
+                <option selected={props.knobAppearance === 'cards'}>Cards</option>
+              </select>
+            </div>
+            {props.knobAppearance === 'cards' && <div className='option-row'>
+              <label htmlFor='color-select'>Card color</label>
+              <select id='color-select' name='color-select' className='color-select' onChange={props.onChangeCardColor}>
+                <option selected={props.cardColor === 'red'}>Red</option>
+                <option selected={props.cardColor === 'blue'}>Blue</option>
+              </select>
+            </div>}
+            <div className='option-row'>
+              <label htmlFor='limit-select'>Limit</label>
+              <select id='limit-select' name='limit-select' className='limit-select' onChange={props.onChangeLimit}>
+                <option>10</option>
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+              </select>
+            </div>
+            <div className='option-row'>
+              <label htmlFor='animation-toggle'>Animations</label>
+              <input defaultChecked type='checkbox'id='animation-toggle' name='animation-toggle' className='animation-toggle' onChange={props.onToggleAnimations} />
+            </div>
           </div>
         }
       </StyledGameBoard>

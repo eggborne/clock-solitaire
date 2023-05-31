@@ -10,8 +10,10 @@ const StyledModal = styled.div`
   height: calc(var(--game-board-size) / 2);
   border-radius: calc(var(--game-board-size) * 0.02);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1.5rem;
   box-shadow: 0 0 1rem black;
   opacity: 0;
   pointer-events: none;
@@ -28,12 +30,22 @@ const StyledModal = styled.div`
     scale: 1;
     pointer-events: all;
   }
+
+  & > .button-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 function Modal(props) {
   return (
     <StyledModal className={props.revealed ? 'revealed' : ''}>
-      <h1>{props.headline}</h1>
+      <div><h1>{props.headline}</h1></div>
+      <div className='button-area'>
+        <button onClick={props.onClickOk}>Try Again</button>
+      </div>
     </StyledModal>
   );
 }

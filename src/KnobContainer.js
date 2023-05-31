@@ -57,6 +57,7 @@ function KnobContainer(props) {
             // flipped={true}
             flipped={knobData.flipped}
             selected={props.selectedKnob.id === knobData.id}
+            animations={props.animations}
             key={knobData.id} 
             id={knobData.id} 
             value={knobData.value} 
@@ -70,6 +71,7 @@ function KnobContainer(props) {
             cardColor={props.cardColor}
             flipped={knobData.flipped}
             selected={props.selectedKnob.id === knobData.id}
+            animations={props.animations}
             key={knobData.id} 
             id={knobData.id} 
             value={knobData.value} 
@@ -84,6 +86,7 @@ function KnobContainer(props) {
             flipped={false}
             under={true}
             selected={false}
+            animations={props.animations}
             key={knobData.id} 
             id={knobData.id} 
             value={knobData.value} 

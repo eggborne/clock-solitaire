@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 
 const StyledApp = styled.main`
   background-color: var(--bg-color);
+  background-image: linear-gradient(var(--bg-color), #ffffff33, var(--bg-color));
   color: var(--text-color);
   height: var(--actual-height);
   display: flex;
@@ -35,6 +36,7 @@ function App() {
   const [currentDeal, setCurrentDeal] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedKnob, setSelectedKnob] = useState(undefined);
+  const [animations, setAnimations] = useState(true);
   const [endModalShowing, setEndModalShowing] = useState(false);
 
   useEffect(() => {
@@ -90,6 +92,10 @@ function App() {
 
   function handleChangeCardColor(e) {
     setCardColor(e.target.value.toLowerCase());
+  }
+
+  function handleToggleAnimations(e) {
+    setAnimations(e.target.checked);
   }
 
   function handleClickMove() {
@@ -168,7 +174,12 @@ function App() {
     console.log('set selectedKnob to', initialSelectedKnob);
   }
 
-  console.log('selectedKnob', selectedKnob);
+  function handleClickTryAgain() {
+    setEndModalShowing(false);
+    setCurrentDeal([]);
+    setDeck(createDeck(knobAmount));
+    setGameStarted(false);
+  }
 
   return (
     <StyledApp>
@@ -177,13 +188,16 @@ function App() {
         <GameBoard 
           knobAppearance={knobAppearance} 
           cardColor={cardColor} 
+          animations={animations} 
           selectedKnob={selectedKnob} 
           gameStarted={gameStarted} 
           currentDeal={currentDeal} 
           onChangeLimit={handleChangeLimit} 
           onChangeAppearance={handleChangeKnobAppearance}
           onChangeCardColor={handleChangeCardColor}
+          onToggleAnimations={handleToggleAnimations}
           endModalShowing={endModalShowing}
+          handleClickTryAgain={handleClickTryAgain}
         />
       </div>
       <div className='control-area'>

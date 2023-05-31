@@ -21,8 +21,6 @@ const StyledKnob = styled.div`
   transform: translateY(-2rem);
   scale: 1.5;
 
-  transition: scale 300ms ease, opacity 500ms ease;
-
   box-shadow: 0 0 calc(var(--knob-size) / 18) black;
   text-shadow: 0 0 0.25rem black;
 
@@ -101,6 +99,7 @@ function Knob(props) {
         backgroundImage: knobBackgroundImage,
         // borderColor: props.selected ? 'lightgreen' : '#ffffff55',
         backgroundPosition: knobBackgroundPosition,
+        transition: props.animations ? 'scale 300ms ease, opacity 500ms ease' : 'none',
       }}
     >
     </StyledKnob>
