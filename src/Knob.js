@@ -18,6 +18,7 @@ const StyledKnob = styled.div`
   font-size: 2rem;
 
   opacity: 0;
+  transform: translateY(-2rem);
   scale: 1.5;
 
   transition: scale 500ms ease, opacity 1000ms ease;
@@ -26,11 +27,17 @@ const StyledKnob = styled.div`
   text-shadow: 0 0 0.25rem black;
 
   &.playing-card {
+    // background-image: url(../public/bicyclebacks-1506x1052.jpg) !important;
     border-width: 0;
     border-radius: 0.25rem;
     background-repeat: no-repeat;
     background-size: 200% 100%;
-    height: calc(var(--knob-size) * (16/10));
+    --card-height: calc(var(--knob-size) * (96/71));
+    height: var(--card-height);
+
+    &.flipped {
+      background-size: 1300% 400%;
+    }
 
     &.blue {
       background-position: center right;
@@ -38,9 +45,23 @@ const StyledKnob = styled.div`
 
   }
 
+  &.selected {
+    outline: 0.25rem solid lightgreen;
+    transition-delay: 500ms; 
+    z-index: 5 !important;
+  }
+
+  &.under {
+    transform: translate(0, calc(var(--padding-width) * -1)) !important;
+    rotate: none !important;
+    z-index: 0 !important;
+    transition-delay: 0ms !important;
+  }
+
   &.revealed {
     opacity: 1;
     scale: 1;
+    transform: none;
   }
 `;
 
@@ -56,20 +77,32 @@ function Knob(props) {
     }
   }, [revealed]);
 
-  const knobClass = `${revealed ? 'revealed' : ''}${props.knobAppearance === 'cards' ? ' playing-card' : ''}`;
-  console.warn('created knob with class', knobClass)
+  let knobClass = `${revealed ? 'revealed' : ''}${props.knobAppearance === 'cards' ? ' playing-card' : ''}`;
+  if (props.flipped) {
+    knobClass += ' flipped';
+  }
+  if (props.under) {
+    knobClass += ' under';
+  }
+  if (props.selected) {
+    knobClass += ' selected';
+  }
+  const knobBackgroundImage = props.flipped ? 'radial-gradient(green, #000000)' : 'radial-gradient(var(--knob-color), #000000)';
+  const knobBackgroundPosition = props.flipped ? 
+    `calc(var(--knob-size) * ${props.value-1} * -1) calc(var(--card-height) * ${props.suit} * -1)`
+  :
+  props.cardColor === 'red' ? 'left center' : 'right center';
 
   return (
     <StyledKnob
       className={knobClass}
       style={{
         rotate: revealed ? `${props.rotation * -1}deg` : '0',
-        backgroundImage: props.flipped ? 'radial-gradient(green, #000000)' : 'radial-gradient(var(--knob-color), #000000)',
-        borderColor: props.selected ? 'lightgreen' : '#ffffff55',
-        backgroundPosition: props.cardColor === 'red' ? 'left center' : 'right center',
+        backgroundImage: knobBackgroundImage,
+        // borderColor: props.selected ? 'lightgreen' : '#ffffff55',
+        backgroundPosition: knobBackgroundPosition,
       }}
     >
-      {props.flipped && props.value}
     </StyledKnob>
   );
 }

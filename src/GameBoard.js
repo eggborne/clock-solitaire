@@ -46,7 +46,7 @@ const StyledGameBoard = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    // overflow: hidden;
   }
 
   & .knob-container {
@@ -79,6 +79,7 @@ function GameBoard(props) {
             className={knobContainerData.className}
             rotation={knobContainerData.rotation}
             knobs={knobContainerData.knobs}
+            underKnobs={knobContainerData.underKnobs}
             knobAppearance={props.knobAppearance}
             cardColor={props.cardColor}
           /> 

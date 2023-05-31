@@ -1,9 +1,9 @@
 :root {
   --actual-height: 100vh;
   --header-height: 4rem;
-  --padding-width: 0.25rem;
+  --padding-width: 1rem;
   --game-board-size: calc(100vw - var(--padding-width));
-  --knob-size: calc(var(--game-board-size) / 7.5);
+  --knob-size: calc(var(--game-board-size) / 7);
   --bg-color: #2d3c5a;
   --alt-bg-color: #213325;
   --text-color: rgb(200, 223, 200);
@@ -39,6 +39,10 @@ footer {
   border-top: 0.05rem solid rgba(0, 0, 0, 0.606);
 }
 
-.playing-card {
+.playing-card.flipped {
+  background-image: url(../public/playingcardfronts.jpg) !important;
+}
+
+.playing-card:not(.flipped) {
   background-image: url(../public/bicyclebacks-1506x1052.jpg) !important;
 }

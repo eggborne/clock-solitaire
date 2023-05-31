@@ -53,6 +53,7 @@ function App() {
       for (let j = 0; j < 4; j++) {
         newDeck.push({
           value: (i + 1),
+          suit: j,
           id: crypto.randomUUID ? crypto.randomUUID() : v4(),
         });
       }
@@ -78,24 +79,41 @@ function App() {
     dealGame();
   }
 
-  function handleClickMove() {
-    console.log('clicked Move!', selectedKnob);
-    const nextCurrentDeal = [ ...currentDeal];
-    const movingKnob = nextCurrentDeal.splice(nextCurrentDeal.indexOf(selectedKnob), 1);
-    nextCurrentDeal[selectedKnob.value - 1].underKnobs.push(movingKnob);
-    setCurrentDeal(nextCurrentDeal);
-  }
-
   function handleChangeKnobAppearance(e) {
     console.warn('knobAppearance at handler is', knobAppearance);
     const newAppearance = e.target.value.toLowerCase();
-    document.documentElement.style.setProperty('--knob-size', newAppearance === 'cards' ? 'calc(var(--game-board-size) / 8)' : 'calc(var(--game-board-size) / 6)')
+    document.documentElement.style.setProperty('--knob-size', newAppearance === 'cards' ? 'calc(var(--game-board-size) / 7)' : 'calc(var(--game-board-size) / 6)');
     console.log('changed appearance', newAppearance);
     setKnobAppearance(newAppearance);
   }
 
   function handleChangeCardColor(e) {
     setCardColor(e.target.value.toLowerCase());
+  }
+
+  function handleClickMove() {
+
+    // splices the wrong one
+
+    console.log('clicked Move!', selectedKnob);
+    const nextCurrentDeal = [ ...currentDeal];
+    console.log('movingKnobContainer lane is', selectedKnob.lane)
+    const movingKnobContainer = nextCurrentDeal[selectedKnob.lane];
+    console.log('movingKnobContainer', movingKnobContainer);
+    const movingKnob = movingKnobContainer.knobs.splice(movingKnobContainer.knobs.indexOf(selectedKnob), 1)[0];
+    console.log('moving knob', movingKnob);
+    const newLaneIndex = selectedKnob.value - 1;
+    const newLane =  nextCurrentDeal[selectedKnob.value - 1];
+    console.log('sending to newLaneIndex', newLaneIndex)
+    newLane.underKnobs.push(movingKnob);
+    const newSelectedKnob = newLane.knobs[newLane.knobs.length - 1];
+    if (!newSelectedKnob) {
+      alert('You lose?');
+      return;
+    }
+    newSelectedKnob.flipped = true;
+    setSelectedKnob({...newSelectedKnob, lane: selectedKnob.value - 1});
+    setCurrentDeal(nextCurrentDeal);
   }
 
   async function dealGame() {
@@ -107,7 +125,7 @@ function App() {
       for (let j=0; j < 4; j++) {
         const randomDraw = drawRandomKnob(drawnIds);
         drawnIds.push(randomDraw.id);
-        knobCollection.push({ selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, rotation: containerRotation });
+        knobCollection.push({ selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, suit: randomDraw.suit, rotation: containerRotation });
       }
       const newKnobContainer = {
         id: i,
@@ -115,6 +133,7 @@ function App() {
         className: `knob-container-${i}`,
         rotation: containerRotation,
         knobs: knobCollection,
+        underKnobs: [],
       };
       knobArray.push(newKnobContainer);
     }
@@ -125,7 +144,7 @@ function App() {
     for (let i=0; i < 4; i++) {
       const randomDraw = drawRandomKnob(drawnIds);
       drawnIds.push(randomDraw.id);
-      centerKnobCollection.push({ flipped: i===3, selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, rotation: '0' });
+      centerKnobCollection.push({ flipped: i===3, selectedKnob: selectedKnob, key: randomDraw.id, id: randomDraw.id, value: randomDraw.value, suit: randomDraw.suit, rotation: '0' });
       if (i===3) {
         initialSelectedKnob = randomDraw;
         console.log('setting initialSelectedKnob to', randomDraw.id);
@@ -138,13 +157,16 @@ function App() {
       className: `knob-container-${knobAmount} center`,
       rotation: '0',
       knobs: centerKnobCollection,
+      underKnobs: [],
     };
     knobArray.push(centerKnobContainer);
 
     setCurrentDeal(knobArray);
-    setSelectedKnob(initialSelectedKnob);
+    setSelectedKnob({...initialSelectedKnob, lane: knobAmount-1});
     console.log('set selectedKnob to', initialSelectedKnob);
   }
+
+  console.log('selectedKnob', selectedKnob);
 
   return (
     <StyledApp>

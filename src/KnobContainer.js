@@ -10,17 +10,25 @@ const StyledKnobContainer = styled.div`
   flex-direction: column;
   // outline: 1px solid white;
 
-  & > div:nth-child(1) {
+  & > div:not(.under):nth-of-type(1) {
     translate: 0 10%;
     z-index: 3;
+    transition-delay: 600ms;
   }
-  & > div:nth-child(2) {
+  & > div:not(.under):nth-of-type(2) {
     translate: 0 20%;
     z-index: 2;
+    transition-delay: 400ms;
   }
-  & > div:nth-child(3) {
+  & > div:not(.under):nth-of-type(3) {
     translate: 0 30%;
     z-index: 1;
+    transition-delay: 200ms;
+  }
+  & > div:not(.under):nth-of-type(4) {
+    translate: 0 0;
+    z-index: 4;
+    transition-delay: 800ms;
   }
 
   &.center {
@@ -42,14 +50,17 @@ function KnobContainer(props) {
         style={{
           rotate: props.rotation + 'deg',
         }}>
+        
         {props.knobs.filter(knob => !(knob.flipped)).map(knobData => 
           <Knob 
             cardColor={props.cardColor}
+            // flipped={true}
             flipped={knobData.flipped}
             selected={props.selectedKnob.id === knobData.id}
             key={knobData.id} 
             id={knobData.id} 
             value={knobData.value} 
+            suit={knobData.suit}
             rotation={knobData.rotation}
             knobAppearance={props.knobAppearance}
           />
@@ -58,10 +69,25 @@ function KnobContainer(props) {
           <Knob 
             cardColor={props.cardColor}
             flipped={knobData.flipped}
-            selected={props.selectedKnob === knobData.id}
+            selected={props.selectedKnob.id === knobData.id}
             key={knobData.id} 
             id={knobData.id} 
             value={knobData.value} 
+            suit={knobData.suit}
+            rotation={knobData.rotation}
+            knobAppearance={props.knobAppearance}
+          />
+        )}
+        {props.underKnobs.map(knobData => 
+          <Knob 
+            cardColor={props.cardColor}
+            flipped={false}
+            under={true}
+            selected={false}
+            key={knobData.id} 
+            id={knobData.id} 
+            value={knobData.value} 
+            suit={knobData.suit}
             rotation={knobData.rotation}
             knobAppearance={props.knobAppearance}
           />
