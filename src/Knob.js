@@ -21,7 +21,7 @@ const StyledKnob = styled.div`
   transform: translateY(-2rem);
   scale: 1.5;
 
-  transition: scale 500ms ease, opacity 1000ms ease;
+  transition: scale 300ms ease, opacity 500ms ease;
 
   box-shadow: 0 0 calc(var(--knob-size) / 18) black;
   text-shadow: 0 0 0.25rem black;
@@ -47,7 +47,7 @@ const StyledKnob = styled.div`
 
   &.selected {
     outline: 0.25rem solid lightgreen;
-    transition-delay: 500ms; 
+    transition-delay: 100ms !important; 
     z-index: 5 !important;
   }
 

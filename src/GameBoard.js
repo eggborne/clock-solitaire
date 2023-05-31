@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import Knob from './Knob';
 import KnobContainer from './KnobContainer';
 import { useEffect, useState } from 'react';
+import Modal from './Modal';
+import ScreenVeil from './ScreenVeil';
 
 const StyledGameBoard = styled.div`
   position: relative;
@@ -42,7 +44,6 @@ const StyledGameBoard = styled.div`
 
   & .knob-area {
     width: 100vw;
-    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,53 +67,59 @@ function GameBoard(props) {
     }
   });
 
+  console.log('endmodal?', props.endModalShowing)
+
   return (
-    <StyledGameBoard>
-      {props.gameStarted ? 
-      <div className='knob-area' style={{
-        scale: revealed ? '1' : '3',
-      }}>
-        {props.currentDeal.map(knobContainerData => 
-          <KnobContainer 
-            key={knobContainerData.id}
-            selectedKnob={props.selectedKnob}
-            className={knobContainerData.className}
-            rotation={knobContainerData.rotation}
-            knobs={knobContainerData.knobs}
-            underKnobs={knobContainerData.underKnobs}
-            knobAppearance={props.knobAppearance}
-            cardColor={props.cardColor}
-          /> 
-        )}
-      </div>
-        :
-        <div className='options-area'>
-        <div className='option-row'>
-          <label htmlFor='type-select'>Knobs / Cards</label>
-          <select name='type-select' className='type-select' onChange={props.onChangeAppearance}>
-            <option selected={props.knobAppearance === 'knobs'}>Knobs</option>
-            <option selected={props.knobAppearance === 'cards'}>Cards</option>
-          </select>
+    <>
+      <Modal revealed={props.endModalShowing} headline={'YOU LOSE :('} />
+      <ScreenVeil revealed={props.endModalShowing} />
+      <StyledGameBoard>
+        {props.gameStarted ? 
+        <div className='knob-area' style={{
+          scale: revealed ? '1' : '3',
+        }}>
+          {props.currentDeal.map(knobContainerData => 
+            <KnobContainer 
+              key={knobContainerData.id}
+              selectedKnob={props.selectedKnob}
+              className={knobContainerData.className}
+              rotation={knobContainerData.rotation}
+              knobs={knobContainerData.knobs}
+              underKnobs={knobContainerData.underKnobs}
+              knobAppearance={props.knobAppearance}
+              cardColor={props.cardColor}
+            /> 
+          )}
         </div>
-        {props.knobAppearance === 'cards' && <div className='option-row'>
-          <label htmlFor='color-select'>Card color</label>
-          <select name='color-select' className='color-select' onChange={props.onChangeCardColor}>
-            <option selected={props.cardColor === 'red'}>Red</option>
-            <option selected={props.cardColor === 'blue'}>Blue</option>
-          </select>
-        </div>}
-        <div className='option-row'>
-          <label htmlFor='limit-select'>Limit</label>
-          <select name='limit-select' className='limit-select' onChange={props.onChangeLimit}>
-            <option>10</option>
-            <option>11</option>
-            <option>12</option>
-            <option>13</option>
-          </select>
-        </div>
-        </div>
-      }
-    </StyledGameBoard>
+          :
+          <div className='options-area'>
+          <div className='option-row'>
+            <label htmlFor='type-select'>Knobs / Cards</label>
+            <select name='type-select' className='type-select' onChange={props.onChangeAppearance}>
+              <option selected={props.knobAppearance === 'knobs'}>Knobs</option>
+              <option selected={props.knobAppearance === 'cards'}>Cards</option>
+            </select>
+          </div>
+          {props.knobAppearance === 'cards' && <div className='option-row'>
+            <label htmlFor='color-select'>Card color</label>
+            <select name='color-select' className='color-select' onChange={props.onChangeCardColor}>
+              <option selected={props.cardColor === 'red'}>Red</option>
+              <option selected={props.cardColor === 'blue'}>Blue</option>
+            </select>
+          </div>}
+          <div className='option-row'>
+            <label htmlFor='limit-select'>Limit</label>
+            <select name='limit-select' className='limit-select' onChange={props.onChangeLimit}>
+              <option>10</option>
+              <option>11</option>
+              <option>12</option>
+              <option>13</option>
+            </select>
+          </div>
+          </div>
+        }
+      </StyledGameBoard>
+    </>
   );
 }
 

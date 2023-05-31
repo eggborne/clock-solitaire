@@ -35,6 +35,7 @@ function App() {
   const [currentDeal, setCurrentDeal] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedKnob, setSelectedKnob] = useState(undefined);
+  const [endModalShowing, setEndModalShowing] = useState(false);
 
   useEffect(() => {
     setDeck(createDeck(knobAmount));
@@ -108,7 +109,8 @@ function App() {
     newLane.underKnobs.push(movingKnob);
     const newSelectedKnob = newLane.knobs[newLane.knobs.length - 1];
     if (!newSelectedKnob) {
-      alert('You lose?');
+      console.warn('GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER ')
+      setEndModalShowing(true);
       return;
     }
     newSelectedKnob.flipped = true;
@@ -181,6 +183,7 @@ function App() {
           onChangeLimit={handleChangeLimit} 
           onChangeAppearance={handleChangeKnobAppearance}
           onChangeCardColor={handleChangeCardColor}
+          endModalShowing={endModalShowing}
         />
       </div>
       <div className='control-area'>
