@@ -83,9 +83,13 @@ function GameBoard(props) {
   const extraKnobs = [14, 15, 16, 17, 18, 19, 20];
 
   let limitOptions = [
-    10, props.knobAppearance === 'cards' ? 'J' : 11, 
-    props.knobAppearance === 'cards' ? 'Q' : 12, 
-    props.knobAppearance === 'cards' ? 'K' : 13,
+    10, 
+    11,
+    12,
+    13,
+    // props.knobAppearance === 'cards' ? 'J' : 11, 
+    // props.knobAppearance === 'cards' ? 'Q' : 12, 
+    // props.knobAppearance === 'cards' ? 'K' : 13,
   ];
 
   if (props.knobAppearance === 'knobs') {
