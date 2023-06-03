@@ -20,6 +20,7 @@ const StyledModal = styled.div`
   scale: 0.5;
   transition: all 500ms ease-in-out;
   z-index: 4;
+  border: 0.1rem solid #00000044;
 
   & > h1 {
     font-size: calc(var(--header-height) / 2.5);
@@ -42,10 +43,15 @@ const StyledModal = styled.div`
 function Modal(props) {
   return (
     <StyledModal className={props.revealed ? 'revealed' : ''}>
-      <div><h1>{props.headline}</h1></div>
-      <div className='button-area'>
-        <button onClick={props.onClickOk}>Try Again</button>
-      </div>
+      {props.revealed &&
+      <>
+        <div><h1>{props.headline}</h1></div>
+        {props.type === 'lose' && <div>Cards left: {props.getUnflippedCardAmount()}</div>}
+        <div className='button-area'>
+          <button onClick={props.onClickOk}>{props.okButtonText}</button>
+        </div>
+      </>
+      }
     </StyledModal>
   );
 }

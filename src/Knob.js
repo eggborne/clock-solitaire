@@ -44,7 +44,7 @@ const StyledKnob = styled.div`
   }
 
   &.selected {
-    outline: 0.25rem solid lightgreen;
+    // outline: 0.25rem solid lightgreen;
     transition-delay: 100ms !important; 
     z-index: 5 !important;
   }
@@ -97,11 +97,11 @@ function Knob(props) {
       style={{
         rotate: revealed ? `${props.rotation * -1}deg` : '0',
         backgroundImage: knobBackgroundImage,
-        // borderColor: props.selected ? 'lightgreen' : '#ffffff55',
         backgroundPosition: knobBackgroundPosition,
         transition: props.animations ? 'scale 300ms ease, opacity 500ms ease' : 'none',
       }}
     >
+      {props.knobAppearance === 'knobs' && props.flipped && props.value}
     </StyledKnob>
   );
 }

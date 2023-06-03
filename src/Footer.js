@@ -20,17 +20,27 @@ const StyledFooter = styled.footer`
     }
   }
 
+  & > h3 {
+    color: white;
+  }
+
   & a {
     color: #aaffaa88;
     text-decoration: none;
   }
 `;
 
-function Footer() {
+function Footer(props) {
   return (
     <StyledFooter>
-      <h4>made just for fun by <a href='mailto:mike@mikedonovan.dev'>mike@mikedonovan.dev</a></h4>
-      <h4><a href='https://github.com/eggborne/clock-solitaire'>View source on GitHub</a></h4>
+      {!props.gameStarted ?
+        <>
+          <h4>made just for fun by <a href='mailto:mike@mikedonovan.dev'>mike@mikedonovan.dev</a></h4>
+          <h4><a href='https://github.com/eggborne/clock-solitaire'>View source on GitHub</a></h4>
+        </>
+        :
+        <h3>{props.knobAppearance} left: {props.getUnflippedCardAmount()}</h3>
+      }
     </StyledFooter>
   );
 }

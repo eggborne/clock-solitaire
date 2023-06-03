@@ -17,6 +17,32 @@ const StyledApp = styled.main`
   align-items: stretch;
   justify-content: space-between;
 
+  &.pre-reveal {
+    filter: blur(0.5rem);
+    scale: 1.1 0.1;
+    opacity: 0.1
+  }
+
+  & .name-area {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    margin: 1rem;
+
+    transition: all 300ms ease;
+  }
+
+  & input[type='text'] {
+    width: calc(var(--game-board-size) / 1.5);
+    font-family: inherit;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0.5rem 0;
+    font-weight: bold;
+  }
+
   & > .game-area, .control-area {
     flex-grow: 1;
     display: flex;
@@ -28,20 +54,25 @@ const StyledApp = styled.main`
 `;
 
 function App() {
-
+  const [loaded, setLoaded] = useState(false);
   const [knobAmount, setKnobAmount] = useState(10);
   const [knobAppearance, setKnobAppearance] = useState('cards');
+  const [playerName, setPlayerName] = useState('red');
   const [cardColor, setCardColor] = useState('red');
   const [deck, setDeck] = useState([]);
   const [currentDeal, setCurrentDeal] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedKnob, setSelectedKnob] = useState(undefined);
   const [animations, setAnimations] = useState(true);
-  const [endModalShowing, setEndModalShowing] = useState(false);
+  const [loseModalShowing, setLoseModalShowing] = useState(false);
+  const [winModalShowing, setWinModalShowing] = useState(false);
 
   useEffect(() => {
-    setDeck(createDeck(knobAmount));
-  }, [])
+    if (!loaded) {
+      setLoaded(true);
+      setDeck(createDeck(knobAmount));
+    }
+  }, [loaded])
 
   function handleChangeLimit(e) {
     const newLimit = e.target.value;
@@ -73,10 +104,6 @@ function App() {
     return randomCard;
   }
 
-  function getKnobDataById(id, arr) {
-    return arr.filter(knob => knob.id === id)[0];
-  }
-
   function handleClickStartGame() {
     setGameStarted(true);
     dealGame();
@@ -90,6 +117,10 @@ function App() {
     setKnobAppearance(newAppearance);
   }
 
+  function handleChangePlayerName(e) {
+    setPlayerName(e.target.value);
+  }
+
   function handleChangeCardColor(e) {
     setCardColor(e.target.value.toLowerCase());
   }
@@ -98,30 +129,35 @@ function App() {
     setAnimations(e.target.checked);
   }
 
+  function getUnflippedCardAmount() {
+    let unflipped = 0;
+    for (const row of currentDeal) {
+      unflipped += row.knobs.length;
+    }
+    return unflipped;
+  }
+
   function handleClickMove() {
-
-    // splices the wrong one
-
-    console.log('clicked Move!', selectedKnob);
     const nextCurrentDeal = [ ...currentDeal];
-    console.log('movingKnobContainer lane is', selectedKnob.lane)
     const movingKnobContainer = nextCurrentDeal[selectedKnob.lane];
-    console.log('movingKnobContainer', movingKnobContainer);
     const movingKnob = movingKnobContainer.knobs.splice(movingKnobContainer.knobs.indexOf(selectedKnob), 1)[0];
-    console.log('moving knob', movingKnob);
-    const newLaneIndex = selectedKnob.value - 1;
     const newLane =  nextCurrentDeal[selectedKnob.value - 1];
-    console.log('sending to newLaneIndex', newLaneIndex)
     newLane.underKnobs.push(movingKnob);
     const newSelectedKnob = newLane.knobs[newLane.knobs.length - 1];
-    if (!newSelectedKnob) {
-      console.warn('GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER GAME OVER ')
-      setEndModalShowing(true);
+    if (!newSelectedKnob) {   
+      if (getUnflippedCardAmount() === 0) {
+        setWinModalShowing(true);
+      } else {
+        setLoseModalShowing(true);
+      }
       return;
     }
     newSelectedKnob.flipped = true;
-    setSelectedKnob({...newSelectedKnob, lane: selectedKnob.value - 1});
+    // const newKnobWithLane = {...newSelectedKnob, lane: newSelectedKnob.value - 1};
+    const newKnobWithLane = {...newSelectedKnob, lane: selectedKnob.value - 1};
+    setSelectedKnob(newKnobWithLane);
     setCurrentDeal(nextCurrentDeal);
+    return nextCurrentDeal;
   }
 
   async function dealGame() {
@@ -175,10 +211,17 @@ function App() {
   }
 
   function handleClickTryAgain() {
-    setEndModalShowing(false);
+    setLoseModalShowing(false);
+    setWinModalShowing(false);
     setCurrentDeal([]);
     setDeck(createDeck(knobAmount));
     setGameStarted(false);
+  }
+
+  async function handleClickAutoPlay() {
+    const newDeal = handleClickMove();
+    await pause(1000);
+    handleClickMove(newDeal);
   }
 
   return (
@@ -192,22 +235,31 @@ function App() {
           selectedKnob={selectedKnob} 
           gameStarted={gameStarted} 
           currentDeal={currentDeal} 
+          onChangePlayerName={handleChangePlayerName}
           onChangeLimit={handleChangeLimit} 
           onChangeAppearance={handleChangeKnobAppearance}
           onChangeCardColor={handleChangeCardColor}
           onToggleAnimations={handleToggleAnimations}
-          endModalShowing={endModalShowing}
+          loseModalShowing={loseModalShowing}
+          winModalShowing={winModalShowing}
           handleClickTryAgain={handleClickTryAgain}
+          getUnflippedCardAmount={getUnflippedCardAmount}
         />
+      </div>
+      <div style={{ height: gameStarted ? '0' : 'var(--header-height)', opacity: gameStarted ? '0' : '1', pointerEvents: gameStarted ? 'none' : 'all' }} className='name-area'>
+        <input placeholder='Enter name' type='text' id='name-input' name='name-input' className='name-input' onChange={handleChangePlayerName} />
       </div>
       <div className='control-area'>
         {gameStarted ? 
-          <Button onClick={handleClickMove} label='Move' />
+          <>
+            <Button round={true} onClick={handleClickMove} label='Move' />
+            <Button special={true} onClick={handleClickAutoPlay} label='Autoplay ($5)' />
+          </>
           :
-          <Button onClick={handleClickStartGame} label='Start' />
+          <Button round={true} onClick={handleClickStartGame} label='Start' />
         }
       </div>
-      <Footer />
+      <Footer gameStarted={gameStarted} getUnflippedCardAmount={getUnflippedCardAmount} knobAppearance={knobAppearance} />
     </StyledApp>
   );
 }
